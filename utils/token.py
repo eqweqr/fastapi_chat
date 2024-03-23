@@ -1,4 +1,5 @@
 import jwt
+from service.black_list import DenyList
 from typing import List
 from datetime import datetime, timezone, timedelta
 # just drop token invalid
@@ -22,12 +23,14 @@ def generate_token(secret: str, algorithms: List[str], data: dict, exp: timedelt
     return token
 
 
-def validate_token(token)->str| None:
+def validate_token(deny_list: DenyList, token: str)->str| None:
     if not token:
+        return None
+    if deny_list.check_denied_token(token):
         return None
     payload = get_payload(token)
     exp = payload['exp']
     if exp < int(datetime.now(timezone.utc).strftime('%s')):
         return None
     username = payload['sub']
-    return get_user(username)
+    return username

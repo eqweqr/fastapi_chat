@@ -1,16 +1,20 @@
 from redis import Redis
 
+
 class DenyList:
+    """instead collection denied token, db contains active token,
+    if was compromied just del it from db."""
     def __init__(self, host_name, port):
-        self.deny_list = Redis(host=host_name, port=port)
+        self.all_current_tokens = Redis(host=host_name, port=port)
     
-    def add_denied_token(self, token, exp):
-        self.deny_list.set(token, True, exp)
+
+    """value is ip and useragent, if have token with same ip and user-agent, drop token"""
+    def add_denied_token(self, token, exp, value):
+        self.all_current_tokens.set(token, value, exp)
 
     def check_denied_token(self, token):
-        if not self.deny_list.get(token):
-            return False
-        return True
+        value = self.all_current_tokens.get(token)
+        return value
 
 
 def setupDenyList(host_name, port):
