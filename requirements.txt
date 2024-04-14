@@ -3,6 +3,7 @@ uvicorn
 sqlmodel
 typer
 dynaconf
+httpx
 jinja2
 python-jose[cryptography]
 passlib[bcrypt]
