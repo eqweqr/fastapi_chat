@@ -13,7 +13,6 @@ bcrypt==4.1.2
 cachetools==5.3.3
 celery==5.3.6
 coverage==7.4.4
-cryptography==3.4.8
 cupshelpers==1.0
 Faker==24.7.1
 gevent==24.2.1
