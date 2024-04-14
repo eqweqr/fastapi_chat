@@ -3,6 +3,7 @@ uvicorn
 sqlmodel
 typer
 dynaconf
+alembic
 httpx
 jinja2
 python-jose[cryptography]
