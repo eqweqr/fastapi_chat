@@ -1,10 +1,14 @@
 from fastapi.testclient import TestClient
-from main import app, make_migrations, make_downgrade
+from main import app, make_migrations
 import pytest
+from model.migration import get_alembic_config, run_upgrade, run_downgrade
 import time
 
 client = TestClient(app)
    
+def make_downgrade():
+    cfg = get_alembic_config()
+    run_downgrade(cfg)
 
 @pytest.fixture(scope='class')
 def init_db():
@@ -130,8 +134,48 @@ class TestLogout:
             )
             assert req.status_code == 409
         
-        # assert req.status_code == status_code 
-        # if req.status_code == 200:
-        #     assert req.json().get('username')
-        #     assert req.json().get('access_token')
 
+class TestScopes:
+    @pytest.mark.parametrize('username,password,email,first,log_user,log_pass,status_code,fake_token',
+                            [ 
+                                ('astarot', 'password', 'astartes@mail.ru', True, 'astarot', 'password', 200, ''),
+                                ('', '', '', False, 'astarot', 'password', 409, 'rewq')
+                                # ('', '', '', False, 'astarot', 'password', 409, 'rweaxd23', 'grant', ''),
+                                # ('', '', '', False, 'astarot', 'password', 409, '', 'grant', ''),
+                                # ('', '', '', False, 'astarot', 'password', 409, '', 'refresh_token', 'Default')
+                            ])
+    def test_scopes_visit(self, login, status_code, fake_token):
+        access_token = login.json().get('access_token')
+        if len(fake_token) != 0:
+            access_token=fake_token
+        req = client.get('/',
+                headers={'Authorization': "Bearer "+access_token},
+        )
+
+        assert req.status_code == status_code
+
+
+    @pytest.mark.parametrize('username,password,email,first,log_user,log_pass,status_code,fake_token,unhashed',
+                            [ 
+                                ('astarot1', 'password', 'astartes1@mail.ru', True, 'astarot1', 'password', 200, '', 'astarot1')
+                            ])
+    def test_scopes_edit_and_visit(self, register, log_user, log_pass, status_code, unhashed, fake_token):
+        hash = register.json().get('hashed_username')
+        response=client.patch(f'/confirm/{unhashed}/?hashed={hash}')
+        response = client.post('/login',
+                            data={'username': log_user, 'password': log_pass},
+                            headers={ 'Content-Type': 'application/x-www-form-urlencoded'})
+        access_token = response.json().get('access_token')
+        if len(fake_token) != 0:
+            access_token = fake_token
+        resp = client.post('/chat/new',
+                    data={'chatname': 'fasd', 'password': 'passowrd'},
+                    headers={ 'Content-Type': 'application/x-www-form-urlencoded',
+                             'Authorization': "Bearer "+access_token,
+                            }
+                    )
+        assert resp.status_code == status_code
+        resp = client.get('/',
+                    headers={'Authorization': "Bearer "+access_token}
+                )
+        assert resp.status_code == status_code
