@@ -3,8 +3,8 @@ name: Test web
 on: [push]
 
 jobs:
-  docker:
-    timeout-minutes: 10
+  run-test:
+    name: Run tests
     runs-on: ubuntu-latest
 
     steps:
@@ -14,21 +14,13 @@ jobs:
     - name: Start containers
       run: docker-compose -f "docker-compose.yml" up -d --build
 
-  build:
-
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['pypy3.10', '3.10']
-      
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
-          python3 -m pytest --cov=../last_one test/test.py
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
+        python3 -m pytest --cov=../last_one test/test.py
