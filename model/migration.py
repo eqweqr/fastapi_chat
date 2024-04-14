@@ -7,7 +7,7 @@ import time
 
 def get_alembic_config() -> Config:
     home = Path(os.getenv('HOME'))
-    path_to_migration_file = home / 'python/last_one/alembic.ini'
+    path_to_migration_file = home / 'runner/work/fastapi_chat/fastapi_chat/alembic.ini'
     return Config(path_to_migration_file)
 
 def run_downgrade(config: Config):
@@ -19,7 +19,7 @@ def run_upgrade(config: Config):
     custom_logger.info('Start upgrade migration')
     command.upgrade(config, 'head')
 
-cfg = get_alembic_config()
-run_upgrade(cfg)
-time.sleep(1)
-run_downgrade(cfg)
+# cfg = get_alembic_config()
+# run_upgrade(cfg)
+# time.sleep(1)
+# run_downgrade(cfg)
