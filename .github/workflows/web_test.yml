@@ -23,4 +23,4 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         pip install -r requirements.txt
-        python3 -m pytest --cov=../last_one test/test.py
+        python3 -m pytest --cov=../fastapi_chat test/test.py
