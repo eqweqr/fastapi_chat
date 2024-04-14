@@ -7,7 +7,7 @@ import time
 
 def get_alembic_config() -> Config:
     home = Path(os.getenv('HOME'))
-    path_to_migration_file = home / 'runner/work/fastapi_chat/fastapi_chat/alembic.ini'
+    path_to_migration_file = home / 'work/fastapi_chat/fastapi_chat/alembic.ini'
     return Config(path_to_migration_file)
 
 def run_downgrade(config: Config):
