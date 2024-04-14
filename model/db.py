@@ -113,7 +113,7 @@ def add_user(username, hashed_password, email):
 
 def get_user(username: str):
     with atomic_session('get_users') as session:
-        return session.query(User).filter(User.username==username).one()
+        return session.query(User).filter(User.username==username).first()
     
 
 # chats = get_chats(limit=10)
