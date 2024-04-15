@@ -138,7 +138,7 @@ class TestLogout:
 class TestScopes:
     @pytest.mark.parametrize('username,password,email,first,log_user,log_pass,status_code,fake_token',
                             [ 
-                                pytest.param('astarot', 'password', 'astartes@mail.ru', True, 'astarot', 'password', 200, marks=pytest.mark.xfail),
+                                pytest.param('astarot', 'password', 'astartes@mail.ru', True, 'astarot', 'password', 200, '', marks=pytest.mark.xfail),
                                 ('', '', '', False, 'astarot', 'password', 409, 'rewq')
                                 # ('', '', '', False, 'astarot', 'password', 409, 'rweaxd23', 'grant', ''),
                                 # ('', '', '', False, 'astarot', 'password', 409, '', 'grant', ''),
